@@ -12,11 +12,15 @@ class App:
     def run(self):
         lista = self.alunoController.listarAlunos()
         print(f"{lista}")
+        completas = self.alunoService.listarConcluidas(123456)
+        print(f'{completas}')
 
     def sample(self):
-        self.alunoController.addAluno('Ariel', 123456)
-        self.alunoController.addAluno('Gabi', 1234)
-        self.alunoController.addAluno('', 8520)
+        self.alunoController.addAluno('Ariel', 123456, 'Eng. Software')
+        self.alunoController.addAluno('Gabi', 1234, 'Filosofia')
+        self.alunoController.addAluno('Lully', 8520, 'Filosofia')
+        self.alunoService.concluir(123, 123456)
+
 
     def reset(self):
         self.alunoService.limparLista()
@@ -24,7 +28,7 @@ class App:
 
 if __name__ == "__main__":
     app = App()
-    #app.reset()
+    app.reset()
     app.sample()
     
     app.run()

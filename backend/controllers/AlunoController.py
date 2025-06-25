@@ -6,9 +6,9 @@ class AlunoController:
     def __init__(self, alunoService: AlunoService):
         self.alunoService = alunoService
 
-    def addAluno(self, nome: str, matricula: int) -> AlunoModel | None:
+    def addAluno(self, nome: str, matricula: int, curso: str) -> AlunoModel | None:
             try:
-                aluno = self.alunoService.criarAluno(nome=nome, matricula=matricula)
+                aluno = self.alunoService.criarAluno(nome=nome, matricula=matricula, curso=curso)
                 return aluno
             except Exception as e:
                 print(f"Erro {e}")
