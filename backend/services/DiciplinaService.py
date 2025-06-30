@@ -65,3 +65,5 @@ class DiciplinaService:
                 self.db.commit()
                 return True
     
+    def addTurma(self):
+        pass
