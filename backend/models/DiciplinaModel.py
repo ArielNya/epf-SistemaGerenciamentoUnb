@@ -12,6 +12,8 @@ class DiciplinaModel(Base):
     carga: Mapped[int] = mapped_column(nullable=False)
     prereq: Mapped[List['Prerequisitos']] = relationship(back_populates='diciplina')
 
+    turmas = relationship('Turma', back_populates='disciplina')
+
     def __repr__(self):
         return f'{self.nome}'
 
