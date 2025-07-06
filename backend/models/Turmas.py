@@ -5,7 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 class Turma(Base):
     __tablename__ = 'turmas'
     id: Mapped[int] = mapped_column(primary_key=True)
-    nome: Mapped[String[50]] = mapped_column(index=True)
+    nome: Mapped[int] = mapped_column(index=True)
+    anoSemestre: Mapped[String[50]] = mapped_column()
 
     diciplinaId: Mapped[int] = mapped_column(Integer, ForeignKey('diciplinas.id'))
     diciplina = relationship('DiciplinaModel', back_populates='turmas')
