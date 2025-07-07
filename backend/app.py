@@ -55,25 +55,16 @@ from data.database import session as Session
 # 1. Cria o objeto principal da aplicação
 # Esta instância 'app' será a aplicação central do Bottle.
 app = Bottle()
-cors_headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    # 'Access-Control-Allow-Headers': 'X-Token, ...',
-    # 'Access-Control-Expose-Headers': 'X-My-Custom-Header, ...',
-    # 'Access-Control-Max-Age': '86400',
-    # 'Access-Control-Allow-Credentials': 'true',
-}
-
-@hook('after_request')
-def handle_options():
-    if request.method == 'OPTIONS':
-        # Bypass request routing and immediately return a response
-        raise HTTPResponse(headers=cors_headers)
-
-@hook('after_request')
+@app.hook('after_request')
 def enable_cors():
-    for key, value in cors_headers.items():
-       response.set_header(key, value)
+    """
+    You need to add some headers to each request.
+    Don't use the wildcard '*' for Access-Control-Allow-Origin in production.
+    """
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+
 # 2. Prepara a Sessão do Banco de Dados
 print("Configurando a sessão do banco de dados...")
 try:
