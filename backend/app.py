@@ -64,7 +64,7 @@ cors_headers = {
     # 'Access-Control-Allow-Credentials': 'true',
 }
 
-@hook('before_request')
+@hook('after_request')
 def handle_options():
     if request.method == 'OPTIONS':
         # Bypass request routing and immediately return a response
