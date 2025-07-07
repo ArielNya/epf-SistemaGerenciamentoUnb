@@ -39,7 +39,15 @@ class DiciplinaController:
             return None
         
     def listarPrereq(self, codigo: int):
-        return self.diciplinaService.listarPrereq(codigo)
+        # --- NOVOS PRINTS AQUI ---
+        print(f"DEBUG_CONTROLLER: Chamando service.listarPrereq para codigo={codigo}")
+        result = self.diciplinaService.listarPrereq(codigo)
+        print(f"DEBUG_CONTROLLER: Resultado do service.listarPrereq: {result}")
+        print(f"DEBUG_CONTROLLER: Tipo do resultado do service: {type(result)}")
+        return result
+        # --- FIM DOS NOVOS PRINTS ---
+        prereq = self.diciplinaService.listarPrereq(codigo)
+        return prereq
     
     def deleteDiciplina(self, codigo: int) -> bool:
         return self.diciplinaService.deleteDiciplina(codigo)

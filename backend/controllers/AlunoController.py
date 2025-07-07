@@ -16,7 +16,8 @@ class AlunoController:
                 return None
 
     def buscarAlunoMatricula(self, matricula: int) -> Optional[AlunoModel]:
-        return self.alunoService.buscarAlunoMatricula(matricula=matricula)
+        aluno = self.alunoService.buscarAlunoMatricula(matricula=matricula)
+        return aluno
 
     def deleteAluno(self, matricula: int) -> bool:
         return self.alunoService.deleteAluno(matricula=matricula)
@@ -32,7 +33,8 @@ class AlunoController:
               return None
          
     def listarDiciplinasConcluidas(self, matricula: int) -> List[Completas]:
-        self.alunoService.listarConcluidas(matricula=matricula)
+        concluidas = self.alunoService.listarConcluidas(matricula=matricula)
+        return concluidas
 
     def limparListaDeAlunos(self) -> bool:
          try:

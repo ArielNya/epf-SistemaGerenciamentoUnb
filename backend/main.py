@@ -1,44 +1,53 @@
-from data.database import initDb, getDb
-from services.AlunoService import AlunoService
-from controllers.AlunoController import AlunoController
-from services.DiciplinaService import DiciplinaService
+# main.py
+# Este é o ponto de entrada principal para executar o servidor web.
 
+import os
+from bottle import run
 
-class App:
-    def __init__(self):
-        initDb()
-        self.session = next(getDb())
-        self.alunoService = AlunoService(self.session)
-        self.alunoController = AlunoController(self.alunoService)
-        self.diciplinaService = DiciplinaService(self.session)
+# Importa o objeto 'app' totalmente configurado do nosso arquivo app.py.
+# Este objeto contém todas as rotas e configurações mescladas.
+from app import app
 
-    def run(self):
-        lista = self.alunoController.listarAlunos()
-        print(f"{lista}")
-        completas = self.alunoService.listarConcluidas(123456)
-        print(f'{completas}')
+# Importa a função de inicialização do banco de dados.
+from data.database import initDb
 
-        diciplinas = self.diciplinaService.listarDiciplinas()
-        print(f'{diciplinas}')
+# É uma boa prática executar o servidor em uma porta definida por uma variável de ambiente,
+# com um padrão razoável se não estiver definida. Isso é útil para deploy.
+# Por exemplo, você pode executar `PORT=8000 python main.py` no seu terminal.
+port = int(os.environ.get('PORT', 8080))
 
-    def sample(self):
-        #self.alunoController.addAluno('Ariel', 123456, 'Eng. Software')
-        #self.alunoController.addAluno('Gabi', 1234, 'Filosofia')
-        #self.alunoController.addAluno('Lully', 8520, 'Filosofia')
-        #self.alunoService.concluir(123, 123456)
+# O bloco `if __name__ == '__main__':` garante que o código dentro dele
+# só seja executado quando este script é chamado diretamente (ex: `python main.py`).
+if __name__ == '__main__':
+    print("--------------------------------------------------")
+    print("Iniciando a configuração do servidor...")
 
-        #self.diciplinaService.criarDiciplina('uwu', 12311, None, 120)
-        self.diciplinaService.deleteDiciplina(12311)
+    # Garante que o diretório para o banco de dados SQLite exista.
+    if not os.path.exists('./data'):
+        print("Diretório './data' não encontrado. Criando...")
+        os.makedirs('./data')
 
-        self.alunoController.deleteAluno(1234)
+    # Inicializa o banco de dados, criando as tabelas se elas não existirem.
+    print("Inicializando o banco de dados (initDb)...")
+    initDb()
+    print("Banco de dados pronto.")
 
-    def reset(self):
-        self.alunoService.limparLista()
+    # A função run() inicia o servidor web de desenvolvimento embutido do Bottle.
+    #
+    # - app: O objeto de aplicação Bottle a ser executado.
+    # - host: '0.0.0.0' torna o servidor acessível de qualquer máquina na
+    #         rede, não apenas 'localhost'.
+    # - port: O número da porta em que o servidor irá escutar.
+    # - debug: Quando True, fornece páginas de erro detalhadas, o que é muito útil
+    #          durante o desenvolvimento.
+    # - reloader: Quando True, o servidor reiniciará automaticamente sempre que você
+    #             salvar uma alteração em um arquivo do projeto. Isso evita
+    #             ter que parar e iniciar o servidor manualmente.
+    print("--------------------------------------------------")
+    print(f"Iniciando o servidor de desenvolvimento Bottle...")
+    print(f"Servidor rodando em http://0.0.0.0:{port}")
+    print(f"Acesse pelo seu navegador em http://localhost:{port}")
+    print("Pressione Ctrl+C para parar o servidor.")
+    print("--------------------------------------------------")
 
-
-if __name__ == "__main__":
-    app = App()
-    # app.reset()
-    app.sample()
-    
-    app.run()
+    run(app, host='localhost', port=port, debug=True, reloader=True)

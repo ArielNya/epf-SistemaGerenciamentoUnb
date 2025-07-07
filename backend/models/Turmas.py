@@ -1,20 +1,22 @@
 from data.database import Base
 from sqlalchemy import String, Time, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import time
+from .DiciplinaModel import DiciplinaModel
 
 class Turma(Base):
     __tablename__ = 'turmas'
     id: Mapped[int] = mapped_column(primary_key=True)
     nome: Mapped[int] = mapped_column(index=True)
-    anoSemestre: Mapped[String[50]] = mapped_column()
+    anoSemestre: Mapped[str] = mapped_column(String(50))
 
-    diciplinaId: Mapped[int] = mapped_column(Integer, ForeignKey('diciplinas.id'))
+    diciplinaId: Mapped[int] = mapped_column(ForeignKey('disciplina.codigo'))
     diciplina = relationship('DiciplinaModel', back_populates='turmas')
 
-    horarioInicio: Mapped[Time] = mapped_column(nullable=False)
-    horarioFim: Mapped[Time] = mapped_column(nullable=False)
-    diasSemana: Mapped[String] = mapped_column(nullable=False)
-    sala: Mapped[String] = mapped_column(nullable=False)
+    horarioInicio: Mapped[time] = mapped_column(nullable=False)
+    horarioFim: Mapped[time] = mapped_column(nullable=False)
+    diasSemana: Mapped[str] = mapped_column(nullable=False)
+    sala: Mapped[str] = mapped_column(nullable=False)
     capacidade: Mapped[int] = mapped_column(nullable=False)
 
     matriculas = relationship('AlunoTurma', back_populates='turma')

@@ -3,13 +3,14 @@ from sqlalchemy import String, ForeignKey, Date
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from data.database import Base
 from typing import List
-
+from datetime import date
+from .AlunoTurmaModel import AlunoTurma
 
 class AlunoModel(Base):
     __tablename__ = 'alunos'
     id: Mapped[int] = mapped_column(primary_key=True)
     nome: Mapped[str] = mapped_column(String(50))
-    dataNascimento: Mapped[Date] = mapped_column()
+    dataNascimento: Mapped[date] = mapped_column()
     matricula: Mapped[int] = mapped_column(nullable=False)
     curso: Mapped[str] = mapped_column(nullable=False)
     concluidas: Mapped[List['Completas']] = relationship(back_populates='aluno')

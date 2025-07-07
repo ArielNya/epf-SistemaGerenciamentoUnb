@@ -2,11 +2,11 @@ from models.AlunoModel import AlunoModel, Completas
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update, JSON
 from datetime import date
+from models.DiciplinaModel import DiciplinaModel
 
 class AlunoService:
     def __init__(self, db: Session):
         self.db: Session = db
-        
 
     def criarAluno(self, nome: str, matricula: int, curso: str, dataNasimento: date) -> AlunoModel | None:
         #if not nome: return None
@@ -40,13 +40,29 @@ class AlunoService:
         if not aluno:
             print(f'Erro: Aluno com matricula {matricula} não foi encontrado')
             return []
-        return self.db.query(Completas).filter(Completas.alunoId == aluno.id).all()
+        concluidas = self.db.query(Completas).filter(Completas.alunoId == aluno.id).all()
+        concluidasList = []
+        for concluida in concluidas:
+            concluidasList.append(concluida)
+
+        return concluidasList
 
     def buscarAlunoMatricula(self, matricula: int) -> AlunoModel | None:
-        return self.db.query(AlunoModel).filter(AlunoModel.matricula == matricula).first()
+        aluno = self.db.query(AlunoModel).filter(AlunoModel.matricula == matricula).first()
+        if aluno:
+            return aluno
+        else:
+            return None
     
     def listarAlunos(self) -> list[AlunoModel]:
-        return self.db.execute(select(AlunoModel)).all()
+        #return self.db.query(AlunoModel).all()
+        try:
+            alunos = self.db.query(AlunoModel).all()
+            return alunos
+        except Exception as e:
+            print(f"Erro no AlunoService.listarAlunos: {e}")
+            self.db_session.rollback()
+            return []
 
     def deleteAluno(self, matricula: int) -> bool:
         aluno = self.buscarAlunoMatricula(matricula)

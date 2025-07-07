@@ -20,9 +20,9 @@ class TurmaController:
     ) -> Optional[Turma]:
         try:
             return self.turmaService.criarTurma(
-                nome=nome, disciplinaId=disciplinaId, anoSemestre=anoSemestre,
+                nome=nome, diciplinaId=disciplinaId, anoSemestre=anoSemestre,
                 horarioInicio=horarioInicio, horarioFim=horarioFim,
-                diasSemana=diasSemana, sala=sala, capacidade=capacidade
+                diaSemana=diasSemana, sala=sala, capacidade=capacidade
             )
         except Exception as e:
             print(f"Erro no TurmaController.criarTurma: {e}")

@@ -10,18 +10,35 @@ class AlunoView:
         self.app = Bottle()
         self.setupRoutes()
 
-    def setupRouetes(self):
+    def setupRoutes(self):
         self.app.route('/alunos', method='POST', callback=self.adicionarAluno)
         self.app.route('/alunos/<matricula:int>', method='GET', callback=self.buscarAlunoMatricula)
         self.app.route('/alunos/<matricula:int>', method='DELETE', callback=self.deleteAluno)
         self.app.route('/alunos', method='GET', callback=self.listarAlunos)
         self.app.route('/alunos/concluir', method='POST', callback=self.concluirDiciplina)
-        self.app.route('alunos/<matricula:int>/concluidas', method='GET', callback=self.listarConcluidas)
-        self.app.route('alunos/limpar', method='DELETE', callback=self.limparLista)
+        self.app.route('/alunos/<matricula:int>/concluidas', method='GET', callback=self.listarConcluidas)
+        self.app.route('/alunos/limpar', method='DELETE', callback=self.limparLista)
 
     def _getJson(self):
         response.content_type = 'application/json'
+        # --- NOVAS LINHAS PARA DEBUG ---
+        print("DEBUG: Entrando em _getJson()")
+        print(f"DEBUG: Headers da Requisição: {request.headers}")
+        print(f"DEBUG: Content-Type recebido: {request.headers.get('Content-Type')}")
+        
+        try:
+            # Tenta ler o corpo bruto da requisição
+            raw_body = request.body.read().decode('utf-8')
+            print(f"DEBUG: Corpo bruto da requisição: '{raw_body}'")
+            # Reseta o ponteiro do corpo para que request.json possa lê-lo
+            request.body.seek(0) 
+        except Exception as e:
+            raw_body = f"Erro ao ler corpo bruto: {e}"
+            print(f"DEBUG: {raw_body}")
+
         data = request.json
+        print(f"DEBUG: Valor de request.json: {data}")
+        print(f"DEBUG: Tipo de request.json: {type(data)}")
         if data is None or not isinstance(data, dict):
             response.status = 400
             return None, json.dumps({'message': 'Corpo da requisição invalido'})
@@ -102,18 +119,27 @@ class AlunoView:
         try:
             alunos = self.alunoController.listarAlunos()
             alunosJson = []
-            for _, alunoObj in alunos:
+            for alunoObj in alunos:
+                data_nascimento_formatada = None
+                if alunoObj.dataNascimento:
+                    try:
+                        data_nascimento_formatada = alunoObj.dataNascimento.isoformat()
+                    except AttributeError:
+                        print(f"DEBUG: dataNascimento do aluno {alunoObj.matricula} não é um objeto de data válido.")
+                        # Trate o erro, talvez defina como None ou uma string vazia
+                        data_nascimento_formatada = None # ou ''
+
                 alunosJson.append({
                     'id': alunoObj.id,
                     'nome': alunoObj.nome,
                     'matricula': alunoObj.matricula,
                     'curso': alunoObj.curso,
-                    'dataNascimento': alunoObj.dataNascimento.isoformat()
+                    'dataNascimento': data_nascimento_formatada
                 })
             return json.dumps(alunosJson)
         except Exception as e:
             response.status = 500
-            return json.dumps({'message': f'Erro interno do servidor {e}'})
+            return json.dumps({'message': f'Erro interno do servidor {type(e).__name__}'})
         
     def concluirDiciplina(self):
         data, errorResponse = self._getJson()
@@ -147,7 +173,7 @@ class AlunoView:
         response.content_type = 'application/json'
         try:
             concluidas = self.alunoController.listarDiciplinasConcluidas(matricula)
-            if not concluidas is None:
+            if concluidas is None:
                 response.status = 404
                 return json.dumps({'message': f'Aluno com matricula {matricula} não foi encontrado'})
             concluidasJson = []

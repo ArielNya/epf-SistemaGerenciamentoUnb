@@ -16,7 +16,7 @@ class TurmaService:
     def criarTurma(self, nome: str, diciplinaId: int, anoSemestre: str,
                  horarioInicio: time, horarioFim: time, diaSemana: str,
                  sala: str, capacidade: int) -> Optional[Turma]:
-        diciplina = self.db.query(DiciplinaModel).filter(DiciplinaModel.id == diciplinaId).first()
+        diciplina = self.db.query(DiciplinaModel).filter(DiciplinaModel.codigo == diciplinaId).first()
         if not diciplina:
             print(f'Erro, diciplina com Id {diciplinaId} não foi encontrada')
             return False
@@ -137,7 +137,7 @@ class TurmaService:
             return False
         
     def matricularAluno(self, alunoId: int, turmaId: int) -> Optional[AlunoTurma]:
-        aluno = self.db.query(AlunoModel).filter(AlunoModel.id == alunoId).first()
+        aluno = self.db.query(AlunoModel).filter(AlunoModel.matricula == alunoId).first()
         turma = self.db.query(Turma).filter(Turma.id == turmaId).first()
         if not aluno:
             print(f'Erro: Aluno com ID {alunoId} não foi encontrado')
@@ -152,7 +152,7 @@ class TurmaService:
         if matriculaExistente:
             print(f'Aluno {aluno.nome} já esta matriculado na turma {turma.nome}')
             return None
-        alunosNaTurma = self.db.query(AlunoTurma).filter(AlunoTurma.turmaId == turmaId).count
+        alunosNaTurma = self.db.query(AlunoTurma).filter(AlunoTurma.turmaId == turmaId).count()
         if alunosNaTurma >= turma.capacidade:
             print(f'Turma {turma.nome} atingiu sua capacidade maxima')
             return None
