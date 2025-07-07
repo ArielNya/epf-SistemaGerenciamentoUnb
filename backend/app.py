@@ -3,7 +3,7 @@
 # e conectando todos os diferentes componentes (Views, Controllers, Services, Database).
 
 import os
-from bottle import Bottle
+from bottle import Bottle, response, request, abort, hook, HTTPResponse
 
 # --- Estrutura de Projeto Assumida ---
 # Assume-se que a estrutura do seu projeto é a seguinte:
@@ -49,12 +49,31 @@ from services.TurmaService import TurmaService
 # Importa o sessionmaker do SQLAlchemy do seu arquivo de banco de dados.
 from data.database import session as Session
 
+
 # --- Injeção de Dependência e Configuração da Aplicação ---
 
 # 1. Cria o objeto principal da aplicação
 # Esta instância 'app' será a aplicação central do Bottle.
 app = Bottle()
+cors_headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    # 'Access-Control-Allow-Headers': 'X-Token, ...',
+    # 'Access-Control-Expose-Headers': 'X-My-Custom-Header, ...',
+    # 'Access-Control-Max-Age': '86400',
+    # 'Access-Control-Allow-Credentials': 'true',
+}
 
+@hook('before_request')
+def handle_options():
+    if request.method == 'OPTIONS':
+        # Bypass request routing and immediately return a response
+        raise HTTPResponse(headers=cors_headers)
+
+@hook('after_request')
+def enable_cors():
+    for key, value in cors_headers.items():
+       response.set_header(key, value)
 # 2. Prepara a Sessão do Banco de Dados
 print("Configurando a sessão do banco de dados...")
 try:
