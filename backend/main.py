@@ -39,10 +39,10 @@ if __name__ == '__main__':
 
     print("--------------------------------------------------")
     print(f"Iniciando o servidor de desenvolvimento Bottle...")
-    print(f"Servidor rodando em http://0.0.0.0:{port}")
+    print(f"Servidor rodando em localhost:{port}")
     print(f"Acesse pelo seu navegador em http://localhost:{port}")
     print("Pressione Ctrl+C para parar o servidor.")
     print("--------------------------------------------------")
 
     # Agora, execute o aplicativo ENVOLVIDO pelo middleware CORS.
-    run(app=app, host='0.0.0.0', port=port, debug=True, reloader=True)
+    run(app=app, port=port, debug=True, reloader=True)
